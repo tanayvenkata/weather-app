@@ -4,11 +4,12 @@ import datetime
 import webbrowser
 from dotenv import load_dotenv
 
+
 class WeatherApp:
     def __init__(self):
         load_dotenv()
         self.city = None
-        self._api_key = os.getenv('OPENWEATHER_API_KEY')
+        self._api_key = os.getenv("OPENWEATHER_API_KEY")
         if not self._api_key:
             print("Please set OPENWEATHER_API_KEY environment variable")
             exit(1)
@@ -20,7 +21,7 @@ class WeatherApp:
         weather_data = response.json()
 
         return weather_data
-    
+
     def is_valid_city(self, city):
         weather_data = self.get_weather(city)
         return weather_data.get("cod") == 200
@@ -36,27 +37,56 @@ class WeatherApp:
                 print("city not found")
 
     def extract_weather_info(self, weather_data):
-        location = weather_data['name']
-        temp = round(weather_data['main']['temp'])
-        temp_min = round(weather_data['main']['temp_min'])
-        temp_max = round(weather_data['main']['temp_max'])
-        feels_like = round(weather_data['main']['feels_like'])
-        description = weather_data['weather'][0]['description'].title()
-        humidity = weather_data['main']['humidity']
-        wind_speed = weather_data['wind']['speed']
-        wind_deg = weather_data['wind']['deg']
+        location = weather_data["name"]
+        temp = round(weather_data["main"]["temp"])
+        temp_min = round(weather_data["main"]["temp_min"])
+        temp_max = round(weather_data["main"]["temp_max"])
+        feels_like = round(weather_data["main"]["feels_like"])
+        description = weather_data["weather"][0]["description"].title()
+        humidity = weather_data["main"]["humidity"]
+        wind_speed = weather_data["wind"]["speed"]
+        wind_deg = weather_data["wind"]["deg"]
 
-        timezone_offset = weather_data['timezone']
-    
-        sunrise_utc = weather_data['sys']['sunrise']
-        sunset_utc = weather_data['sys']['sunset']
-        
-        sunrise = datetime.datetime.utcfromtimestamp(sunrise_utc + timezone_offset).strftime('%I:%M %p')
-        sunset = datetime.datetime.utcfromtimestamp(sunset_utc + timezone_offset).strftime('%I:%M %p')
-    
-        return location, temp, temp_min, temp_max, description, feels_like, humidity, wind_speed, wind_deg, sunrise, sunset
-    
-    def create_html(self, location, temp, temp_min, temp_max, description, feels_like, humidity, wind_speed, wind_deg, sunrise, sunset):
+        timezone_offset = weather_data["timezone"]
+
+        sunrise_utc = weather_data["sys"]["sunrise"]
+        sunset_utc = weather_data["sys"]["sunset"]
+
+        sunrise = datetime.datetime.utcfromtimestamp(
+            sunrise_utc + timezone_offset
+        ).strftime("%I:%M %p")
+        sunset = datetime.datetime.utcfromtimestamp(
+            sunset_utc + timezone_offset
+        ).strftime("%I:%M %p")
+
+        return (
+            location,
+            temp,
+            temp_min,
+            temp_max,
+            description,
+            feels_like,
+            humidity,
+            wind_speed,
+            wind_deg,
+            sunrise,
+            sunset,
+        )
+
+    def create_html(
+        self,
+        location,
+        temp,
+        temp_min,
+        temp_max,
+        description,
+        feels_like,
+        humidity,
+        wind_speed,
+        wind_deg,
+        sunrise,
+        sunset,
+    ):
         html_template = f"""<!DOCTYPE html>
     <html>
     <head>
@@ -112,17 +142,40 @@ class WeatherApp:
 
     def generate_dashboard(self):
         weather_data = self.get_weather()
-        location, temp, temp_min, temp_max, description, feels_like, humidity, wind_speed, wind_deg, sunrise, sunset = self.extract_weather_info(weather_data)
-        html_content = self.create_html(location, temp, temp_min, temp_max, description, feels_like, humidity, wind_speed, wind_deg, sunrise, sunset)
-        
+        (
+            location,
+            temp,
+            temp_min,
+            temp_max,
+            description,
+            feels_like,
+            humidity,
+            wind_speed,
+            wind_deg,
+            sunrise,
+            sunset,
+        ) = self.extract_weather_info(weather_data)
+        html_content = self.create_html(
+            location,
+            temp,
+            temp_min,
+            temp_max,
+            description,
+            feels_like,
+            humidity,
+            wind_speed,
+            wind_deg,
+            sunrise,
+            sunset,
+        )
+
         filename = "weather_dashboard.html"
         with open("weather_dashboard.html", "w", encoding="utf-8") as file:
             file.write(html_content)
-        
+
         file_path = os.path.abspath(filename)
         webbrowser.open(f"file://{file_path}")
         print(f"Dashboard generated for {location}! Check {filename}")
-
 
 
 if __name__ == "__main__":

@@ -22,8 +22,8 @@ A Python-based weather dashboard that generates a styled HTML report.
 ## Notes
 I plan to edit these files once I've learned Javascript to enhance the functionality and provide interactive elements.
 
-
 ## File Structure
+```
 weather-app/
 ├── weather.py              # Main python application
 ├── styles.css              # Dashboard styling
@@ -32,4 +32,5 @@ weather-app/
 ├── .env                    # Your API key (create this)
 ├── weather_dashboard.html  # Dashboard (created after running)
 └── README.md               # This file
+```
 
